@@ -54,4 +54,48 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     }
+
+    // Analytics event tracking
+    function trackEvent(gaAction, gaCategory, gaLabel, fbEvent, fbParams) {
+        if (typeof gtag === 'function') {
+            gtag('event', gaAction, { event_category: gaCategory, event_label: gaLabel });
+        }
+        if (typeof fbq === 'function' && fbEvent) {
+            fbq('track', fbEvent, fbParams || {});
+        }
+    }
+
+    // Phone click
+    document.querySelectorAll('a[href^="tel:"]').forEach(function (link) {
+        link.addEventListener('click', function () {
+            trackEvent('phone_call', 'contact', '262-345-SKID', 'Contact');
+        });
+    });
+
+    // Email click
+    document.querySelectorAll('a[href^="mailto:"]').forEach(function (link) {
+        link.addEventListener('click', function () {
+            trackEvent('email_click', 'contact', link.getAttribute('href').replace('mailto:', ''), 'Contact');
+        });
+    });
+
+    // "Get a Free Quote" CTA buttons
+    document.querySelectorAll('.btn-primary[href="#contact"]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            trackEvent('cta_click', 'engagement', 'get_free_quote', 'Lead');
+        });
+    });
+
+    // Quote form submission
+    var contactForm = document.querySelector('#contact-form form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function () {
+            var serviceEl = contactForm.querySelector('[name="service"]');
+            var service = serviceEl ? (serviceEl.value || 'not_selected') : 'not_selected';
+            trackEvent('form_submit', 'lead', service, 'Lead', {
+                content_name: 'Quote Request',
+                content_category: service
+            });
+        });
+    }
 });

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://amg262.github.io/skidderdone/sitemap.xml
